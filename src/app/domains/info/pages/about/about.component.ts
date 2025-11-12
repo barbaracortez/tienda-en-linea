@@ -3,17 +3,9 @@ import { CommonModule } from '@angular/common';
 
 import { CounterComponent } from '@shared/components/counter/counter.component';
 import { HighlightDirective } from '@shared/directives/highlight.directive';
-
-import { WaveAudioComponent } from '@info/components/wave-audio/wave-audio.component';
-
 @Component({
   selector: 'app-about',
-  imports: [
-    CommonModule,
-    CounterComponent,
-    WaveAudioComponent,
-    HighlightDirective,
-  ],
+  imports: [CommonModule, CounterComponent, HighlightDirective],
   templateUrl: './about.component.html',
 })
 export default class AboutComponent {
