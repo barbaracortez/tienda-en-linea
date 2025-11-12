@@ -66,6 +66,14 @@
               ],
               "outputHashing": "all"
             },
+            "staging": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
+                }
+            ]
+          },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
@@ -89,7 +97,10 @@
             "production": {
               "buildTarget": "store:build:production"
             },
-            "development": {
+             "staging": {
+              "buildTarget": "store:build:staging"
+            },
+            "develop": {
               "buildTarget": "store:build:development"
             }
           },
