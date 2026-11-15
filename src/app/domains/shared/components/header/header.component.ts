@@ -1,31 +1,46 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CartService } from '../../services/cart.service';
-import { RouterLinkWithHref, RouterLinkActive } from '@angular/router';
-import { SearchComponent } from '../search/search.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+} from '@angular/router';
+import { filter } from 'rxjs';
+import { SearchComponent } from '@shared/components/search/search.component';
+import { CartService } from '@shared/services/cart.service';
 
 @Component({
   selector: 'app-header',
-  imports: [
-    CommonModule,
-    RouterLinkWithHref,
-    RouterLinkActive,
-    SearchComponent,
-  ],
+  imports: [RouterLink, RouterLinkActive, SearchComponent],
   templateUrl: './header.component.html',
 })
 export class HeaderComponent {
-  hideSideMenu = signal(true);
-  showMenu = signal(false);
-  private cartService = inject(CartService);
-  cart = this.cartService.cart;
-  total = this.cartService.total;
+  private readonly cartService = inject(CartService);
 
-  toogleSideMenu() {
-    this.hideSideMenu.update(prevState => !prevState);
+  readonly cartCount = this.cartService.count;
+  readonly menuOpen = signal(false);
+
+  readonly links = [
+    { label: 'Productos', path: '/', exact: true },
+    { label: 'Sobre el proyecto', path: '/about', exact: false },
+  ];
+
+  constructor() {
+    // Cierra el menú móvil al navegar.
+    inject(Router)
+      .events.pipe(
+        filter(event => event instanceof NavigationEnd),
+        takeUntilDestroyed()
+      )
+      .subscribe(() => this.menuOpen.set(false));
   }
 
   toggleMenu() {
-    this.showMenu.update(prevState => !prevState);
+    this.menuOpen.update(open => !open);
+  }
+
+  openCart() {
+    this.cartService.open();
   }
 }

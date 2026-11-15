@@ -1,48 +1,106 @@
-import { Component, inject, signal, OnInit, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ProductService } from '@shared/services/product.service';
+import { CurrencyPipe } from '@angular/common';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { Title } from '@angular/platform-browser';
+import { RouterLink } from '@angular/router';
+import { combineLatest, switchMap, tap } from 'rxjs';
+import { ImgFallbackDirective } from '@shared/directives/img-fallback.directive';
 import { Product } from '@shared/models/product.model';
 import { CartService } from '@shared/services/cart.service';
+import { ProductService } from '@shared/services/product.service';
+import { ToastService } from '@shared/services/toast.service';
+import { LoadState, toLoadState } from '@shared/utils/load-state';
+import { pageTitle } from '@shared/utils/title';
+
+const MAX_QUANTITY = 10;
 
 @Component({
   selector: 'app-product-detail',
-  imports: [CommonModule],
+  imports: [CurrencyPipe, RouterLink, ImgFallbackDirective],
   templateUrl: './product-detail.component.html',
 })
-export default class ProductDetailComponent implements OnInit {
-  readonly slug = input<string>();
+export default class ProductDetailComponent {
+  private readonly productService = inject(ProductService);
+  private readonly cartService = inject(CartService);
+  private readonly toast = inject(ToastService);
+  private readonly title = inject(Title);
 
-  $product = signal<Product | null>(null);
-  $cover = signal<string>('');
+  /** Parámetro de ruta `/product/:slug`. */
+  readonly slug = input.required<string>();
 
-  private productService = inject(ProductService);
-  private cartService = inject(CartService);
+  readonly maxQuantity = MAX_QUANTITY;
+  readonly quantity = signal(1);
+  private readonly selectedImage = signal<string | null>(null);
+  private readonly retry = signal(0);
 
-  ngOnInit() {
-    const slug = this.slug();
+  private readonly state = toSignal(
+    combineLatest([toObservable(this.slug), toObservable(this.retry)]).pipe(
+      tap(() => {
+        this.selectedImage.set(null);
+        this.quantity.set(1);
+      }),
+      switchMap(([slug]) =>
+        this.productService.getBySlug(slug).pipe(toLoadState())
+      )
+    ),
+    { initialValue: { status: 'loading' } as LoadState<Product> }
+  );
 
-    if (slug) {
-      this.productService.getOneBySlug(slug).subscribe({
-        next: product => {
-          this.$product.set(product);
+  readonly loading = computed(() => this.state().status === 'loading');
+  readonly error = computed(() => this.state().status === 'error');
+  readonly product = computed(() => {
+    const state = this.state();
+    return state.status === 'success' ? state.data : null;
+  });
+  readonly cover = computed(
+    () => this.selectedImage() ?? this.product()?.images[0] ?? ''
+  );
 
-          // establecer la portada inicial
-          if (product.images.length > 0) {
-            this.$cover.set(product.images[0]);
-          }
-        },
-      });
-    }
+  constructor() {
+    effect(() => {
+      const product = this.product();
+      if (product) {
+        this.title.setTitle(pageTitle(product.title));
+      } else if (this.error()) {
+        this.title.setTitle(pageTitle('Producto no encontrado'));
+      }
+    });
   }
 
-  changeCover(newImg: string) {
-    this.$cover.set(newImg);
+  selectImage(image: string) {
+    this.selectedImage.set(image);
+  }
+
+  increase() {
+    this.quantity.update(q => Math.min(q + 1, MAX_QUANTITY));
+  }
+
+  decrease() {
+    this.quantity.update(q => Math.max(q - 1, 1));
+  }
+
+  reload() {
+    this.retry.update(n => n + 1);
   }
 
   addToCart() {
-    const product = this.$product();
-    if (product) {
-      this.cartService.addToCart(product);
+    const product = this.product();
+    if (!product) {
+      return;
     }
+    this.cartService.add(product, this.quantity());
+    this.toast.show(`“${product.title}” se agregó al carrito`);
+  }
+
+  buyNow() {
+    this.addToCart();
+    this.cartService.open();
   }
 }

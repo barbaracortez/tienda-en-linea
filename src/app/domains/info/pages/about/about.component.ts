@@ -1,24 +1,40 @@
-import { Component, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
-import { CounterComponent } from '@shared/components/counter/counter.component';
-import { HighlightDirective } from '@shared/directives/highlight.directive';
-import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-about',
-  imports: [CommonModule, CounterComponent, HighlightDirective, FormsModule],
+  imports: [RouterLink],
   templateUrl: './about.component.html',
 })
 export default class AboutComponent {
-  duration = signal(1000);
-  message = signal('Hola');
+  readonly features = [
+    {
+      title: 'Catálogo con filtros',
+      text: 'Listado de productos por categoría y búsqueda por nombre, con el estado guardado en la URL.',
+    },
+    {
+      title: 'Carrito persistente',
+      text: 'Cantidades, eliminación y total calculado con signals; se guarda en localStorage.',
+    },
+    {
+      title: 'Estados de carga y error',
+      text: 'Skeletons mientras cargan los datos, mensajes claros y opción de reintentar.',
+    },
+    {
+      title: 'Accesibilidad',
+      text: 'Navegación por teclado, etiquetas ARIA, foco visible y panel del carrito que se cierra con Escape.',
+    },
+  ];
 
-  changeDuration(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.duration.set(input.valueAsNumber);
-  }
-
-  changeMessage(event: Event) {
-    console.log('changeMessage', event);
-  }
+  readonly stack = [
+    'Angular 19',
+    'TypeScript',
+    'Signals',
+    'RxJS',
+    'Standalone components',
+    'Lazy loading',
+    'Tailwind CSS',
+    'ESLint + Prettier',
+    'Jasmine + Karma',
+  ];
 }

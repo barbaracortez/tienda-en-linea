@@ -1,31 +1,44 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Product } from '../models/product.model';
-import { environment } from 'src/environments/environment.development';
+import { Observable, map } from 'rxjs';
+import { environment } from '@env/environment';
+import { Product, ProductFilters } from '@shared/models/product.model';
+import { MAIN_CATEGORY_SLUGS } from '@shared/services/category.service';
+import { normalizeImages } from '@shared/utils/normalize-images';
 
-@Injectable({
-  providedIn: 'root',
-})
+/** Descarta productos de prueba que otros usuarios crean en la API pública. */
+const isValidProduct = (product: Product): boolean =>
+  product.title?.trim().length > 0 &&
+  MAIN_CATEGORY_SLUGS.includes(product.category?.slug);
+
+const normalizeProduct = (product: Product): Product => ({
+  ...product,
+  images: normalizeImages(product.images),
+});
+
+@Injectable({ providedIn: 'root' })
 export class ProductService {
-  private http = inject(HttpClient);
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = `${environment.apiUrl}/api/v1/products`;
 
-  getProducts(params: { category_id?: string; category_slug?: string }) {
-    const url = new URL(`${environment.apiUrl}/api/v1/products`);
-    if (params.category_id) {
-      url.searchParams.set('categoryId', params.category_id);
+  getProducts(filters: ProductFilters = {}): Observable<Product[]> {
+    let params = new HttpParams();
+    if (filters.categorySlug) {
+      params = params.set('categorySlug', filters.categorySlug);
     }
-    if (params.category_slug) {
-      url.searchParams.set('categorySlug', params.category_slug);
+    if (filters.title) {
+      params = params.set('title', filters.title);
     }
-    return this.http.get<Product[]>(url.toString());
+    return this.http
+      .get<Product[]>(this.baseUrl, { params })
+      .pipe(
+        map(products => products.filter(isValidProduct).map(normalizeProduct))
+      );
   }
 
-  getOne(id: string) {
-    const url = `${environment.apiUrl}/api/v1/products/${id}`;
-    return this.http.get<Product>(url);
-  }
-  getOneBySlug(slug: string) {
-    const url = `${environment.apiUrl}/api/v1/products/slug/${slug}`;
-    return this.http.get<Product>(url);
+  getBySlug(slug: string): Observable<Product> {
+    return this.http
+      .get<Product>(`${this.baseUrl}/slug/${encodeURIComponent(slug)}`)
+      .pipe(map(normalizeProduct));
   }
 }

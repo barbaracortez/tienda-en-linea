@@ -1,24 +1,54 @@
-<div>
-  <h1 class="text-lg font-bold" appHighlight>About</h1>
-
-  <p class="text-base">
-    Lorem ipsum dolor
-    <span appHighlight>sit amet consectetur adipisicing elit.</span>
-    Facere vel delectus numquam aliquid itaque nulla.
+<article class="mx-auto max-w-3xl">
+  <p class="text-sm font-semibold uppercase tracking-wider text-accent">
+    Sobre el proyecto
+  </p>
+  <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+    Una tienda en línea hecha con Angular moderno
+  </h1>
+  <p class="mt-4 text-lg leading-relaxed text-slate-300">
+    NgStore es una aplicación de e-commerce de demostración. Consume la
+    <a
+      href="https://fakeapi.platzi.com/"
+      target="_blank"
+      rel="noopener"
+      class="text-accent underline-offset-4 hover:underline"
+      >Platzi Fake Store API</a
+    >
+    y aplica las prácticas actuales del framework: componentes standalone,
+    signals para el estado, rutas con carga diferida y una arquitectura
+    organizada por dominios.
   </p>
 
-  <p class="text-base">Número de clientes</p>
+  <h2 class="mt-12 text-xl font-semibold">Funcionalidades</h2>
+  <ul class="mt-4 grid gap-4 sm:grid-cols-2">
+    @for (feature of features; track feature.title) {
+      <li class="rounded-xl border border-nightBorder bg-nightLight p-5">
+        <h3 class="font-medium text-white">{{ feature.title }}</h3>
+        <p class="mt-1 text-sm leading-relaxed text-slate-400">
+          {{ feature.text }}
+        </p>
+      </li>
+    }
+  </ul>
 
-  <p>
-    <input
-      [ngModel]="duration()"
-      (ngModelChange)="duration.set($event)"
-      type="range"
-      min="0"
-      max="1000" />
-  </p>
+  <h2 class="mt-12 text-xl font-semibold">Tecnologías</h2>
+  <ul class="mt-4 flex flex-wrap gap-2">
+    @for (tech of stack; track tech) {
+      <li
+        class="rounded-full border border-nightBorder px-3 py-1 text-sm text-slate-300">
+        {{ tech }}
+      </li>
+    }
+  </ul>
 
-  @if (duration() > 0) {
-    <app-counter [$duration]="duration()" [$message]="message()" />
-  }
-</div>
+  <div class="mt-12 flex flex-wrap gap-3">
+    <a routerLink="/" class="btn-primary">Ver la tienda</a>
+    <a
+      href="https://github.com/barbaracortez/tienda-en-linea"
+      target="_blank"
+      rel="noopener"
+      class="btn-secondary"
+      >Código en GitHub</a
+    >
+  </div>
+</article>

@@ -1,11 +1,14 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
+import { CartDrawerComponent } from '@shared/components/cart-drawer/cart-drawer.component';
 import { HeaderComponent } from '@shared/components/header/header.component';
+import { ToastComponent } from '@shared/components/toast/toast.component';
 
 @Component({
   selector: 'app-layout',
-  imports: [CommonModule, HeaderComponent, RouterModule],
+  imports: [RouterOutlet, HeaderComponent, CartDrawerComponent, ToastComponent],
   templateUrl: './layout.component.html',
 })
-export class LayoutComponent {}
+export class LayoutComponent {
+  readonly year = new Date().getFullYear();
+}

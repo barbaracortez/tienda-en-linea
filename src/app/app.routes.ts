@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from '@shared/components/layout/layout.component';
-import { NotFoundComponent } from '@info/pages/not-found/not-found.component';
 
 export const routes: Routes = [
   {
@@ -9,30 +8,30 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () =>
-          import('./domains/products/pages/list/list.component'),
+        title: 'Productos',
+        loadComponent: () => import('@products/pages/list/list.component'),
       },
       {
         path: 'category/:slug',
-        loadComponent: () =>
-          import('./domains/products/pages/list/list.component'),
-      },
-      {
-        path: 'about',
-        loadComponent: () =>
-          import('./domains/info/pages/about/about.component'),
+        title: 'Productos',
+        loadComponent: () => import('@products/pages/list/list.component'),
       },
       {
         path: 'product/:slug',
         loadComponent: () =>
-          import(
-            './domains/products/pages/product-detail/product-detail.component'
-          ),
+          import('@products/pages/product-detail/product-detail.component'),
+      },
+      {
+        path: 'about',
+        title: 'Sobre el proyecto',
+        loadComponent: () => import('@info/pages/about/about.component'),
+      },
+      {
+        path: '**',
+        title: 'Página no encontrada',
+        loadComponent: () =>
+          import('@info/pages/not-found/not-found.component'),
       },
     ],
-  },
-  {
-    path: '**',
-    component: NotFoundComponent,
   },
 ];

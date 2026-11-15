@@ -1,24 +1,37 @@
-<div class="group rounded-lg border">
+@let item = product();
+
+<article
+  class="group flex h-full flex-col overflow-hidden rounded-xl border border-nightBorder bg-nightLight transition hover:-translate-y-0.5 hover:border-slate-500 hover:shadow-soft">
   <a
-    [routerLink]="['/product', product().slug]"
-    class="w-full overflow-hidden rounded-t-lg bg-gray-200">
+    [routerLink]="['/product', item.slug]"
+    class="block aspect-square overflow-hidden bg-night"
+    tabindex="-1"
+    aria-hidden="true">
     <img
-      [src]="product().images[0]"
-      [alt]="product().title"
-      class="h-full w-full object-cover object-center group-hover:opacity-75" />
+      appImgFallback
+      [src]="item.images[0]"
+      [alt]="item.title"
+      loading="lazy"
+      class="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
   </a>
-  <div class="flex flex-col space-y-2 p-4">
-    <h3 class="text-sm text-gray-700">{{ product().title }}</h3>
-    <p class="text-lg font-medium text-gray-900">
-      {{ product().price | currency: '$' : 'symbol' : '1.0' }}
+
+  <div class="flex flex-1 flex-col gap-1 p-4">
+    <p class="text-xs font-medium uppercase tracking-wider text-slate-500">
+      {{ item.category.name }}
     </p>
-    <p class="text-sm font-medium text-gray-500">
-      {{ product().creationAt | timeAgo }}
+    <h3 class="line-clamp-2 text-sm font-medium text-slate-100">
+      <a [routerLink]="['/product', item.slug]" class="hover:text-accent">{{
+        item.title
+      }}</a>
+    </h3>
+    <p class="mt-auto pt-2 text-lg font-semibold text-white">
+      {{ item.price | currency }}
     </p>
     <button
-      class="text-black bg-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 w-full"
+      type="button"
+      class="btn-secondary mt-2 w-full"
       (click)="addToCartHandler()">
-      Add to cart
+      Agregar al carrito
     </button>
   </div>
-</div>
+</article>
