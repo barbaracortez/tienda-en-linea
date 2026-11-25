@@ -98,7 +98,7 @@ export const CHECKOUT_FIELDS: FieldConfig[] = [
     type: 'text',
     autocomplete: 'postal-code',
     placeholder: 'Ej.: 1425',
-    hint: 'Ej.: 1425 o C1425ABC',
+    hint: '4 dígitos (1425) o código CPA (C1425ABC).',
   },
 ];
 

@@ -25,6 +25,10 @@ export const routes: Routes = [
       {
         path: 'checkout',
         title: 'Finalizar compra',
+        data: {
+          description:
+            'Checkout simulado de NgStore: datos de envío con validaciones, revisión del pedido y confirmación. No se cobra nada.',
+        },
         canActivate: [cartNotEmptyGuard],
         loadComponent: () =>
           import('@checkout/pages/checkout/checkout.component'),
@@ -32,12 +36,17 @@ export const routes: Routes = [
       {
         path: 'checkout/confirmacion/:orderId',
         title: 'Pedido confirmado',
+        data: { description: 'Confirmación de un pedido simulado en NgStore.' },
         loadComponent: () =>
           import('@checkout/pages/confirmation/confirmation.component'),
       },
       {
         path: 'about',
         title: 'Sobre el proyecto',
+        data: {
+          description:
+            'Cómo está hecho NgStore: stack, decisiones técnicas (signals, lazy loading, data source intercambiable), accesibilidad y tests.',
+        },
         loadComponent: () => import('@info/pages/about/about.component'),
       },
       {

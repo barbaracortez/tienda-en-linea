@@ -41,8 +41,11 @@
           class="aspect-square overflow-hidden rounded-xl border border-nightBorder bg-nightLight">
           <img
             appImgFallback
-            [src]="cover()"
-            [alt]="item.title"
+            [ngSrc]="cover()"
+            [alt]="coverAlt()"
+            width="800"
+            height="800"
+            priority
             class="h-full w-full object-cover" />
         </div>
 
@@ -56,13 +59,20 @@
                   [class.border-accent]="image === cover()"
                   [class.border-transparent]="image !== cover()"
                   [attr.aria-pressed]="image === cover()"
-                  [attr.aria-label]="'Ver imagen ' + (i + 1)"
+                  [attr.aria-label]="
+                    'Ver imagen ' + (i + 1) + ' de ' + item.images.length
+                  "
                   (click)="selectImage(image)">
+                  <!-- <img> común: comparte URL con la portada (priority) y
+                       NgOptimizedImage identifica las imágenes por URL. -->
                   <img
                     appImgFallback
                     [src]="image"
                     alt=""
+                    width="200"
+                    height="200"
                     loading="lazy"
+                    decoding="async"
                     class="h-full w-full object-cover" />
                 </button>
               </li>
