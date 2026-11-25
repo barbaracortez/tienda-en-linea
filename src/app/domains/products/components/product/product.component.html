@@ -1,7 +1,7 @@
 @let item = product();
 
 <article
-  class="group flex h-full flex-col overflow-hidden rounded-xl border border-nightBorder bg-nightLight transition hover:-translate-y-0.5 hover:border-slate-500 hover:shadow-soft">
+  class="group flex h-full flex-col overflow-hidden rounded-xl border border-nightBorder bg-nightLight transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-soft">
   <a
     [routerLink]="['/product', item.slug]"
     class="block aspect-square overflow-hidden bg-night"
@@ -9,20 +9,24 @@
     aria-hidden="true">
     <img
       appImgFallback
-      [src]="item.images[0]"
+      [ngSrc]="cover()"
       [alt]="item.title"
-      loading="lazy"
+      width="800"
+      height="800"
+      [priority]="priority()"
       class="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
   </a>
 
   <div class="flex flex-1 flex-col gap-1 p-4">
-    <p class="text-xs font-medium uppercase tracking-wider text-slate-500">
+    <p class="text-xs font-medium uppercase tracking-wider text-slate-400">
       {{ item.category.name }}
     </p>
     <h3 class="line-clamp-2 text-sm font-medium text-slate-100">
-      <a [routerLink]="['/product', item.slug]" class="hover:text-accent">{{
-        item.title
-      }}</a>
+      <a
+        [routerLink]="['/product', item.slug]"
+        class="hover:text-accent-light"
+        >{{ item.title }}</a
+      >
     </h3>
     <p class="mt-auto pt-2 text-lg font-semibold text-white">
       {{ item.price | currency }}
@@ -30,6 +34,7 @@
     <button
       type="button"
       class="btn-secondary mt-2 w-full"
+      [attr.aria-label]="'Agregar ' + item.title + ' al carrito'"
       (click)="addToCartHandler()">
       Agregar al carrito
     </button>
