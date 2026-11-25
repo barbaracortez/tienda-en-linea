@@ -29,7 +29,7 @@ E-commerce completo hecho con Angular 19, signals y Tailwind CSS: catálogo con 
 
 ## Stack
 
-Angular 19 (standalone components, signals, Reactive Forms, NgOptimizedImage) · TypeScript · RxJS · Tailwind CSS · Jasmine + Karma · ESLint + Prettier · Vercel
+Angular 19 (standalone components, signals, Reactive Forms, NgOptimizedImage) · TypeScript · RxJS · Tailwind CSS · Fraunces + Inter · Jasmine + Karma · ESLint + Prettier · Vercel
 
 ## Decisiones técnicas
 
@@ -38,6 +38,7 @@ Angular 19 (standalone components, signals, Reactive Forms, NgOptimizedImage) ·
 - **Estado en la URL.** Categoría, búsqueda, orden y precio llegan a los componentes como `input()` gracias a `withComponentInputBinding`. Los valores inválidos de la URL se ignoran.
 - **Latencia simulada.** El catálogo local responde con 300–600 ms de demora en filtros y navegación, para que se vean los estados de carga. La carga inicial no se demora.
 - **Rendimiento.** Rutas lazy, imágenes WebP de 400 y 800 px con un loader de NgOptimizedImage (`srcset`/`sizes`) y `priority` en las imágenes visibles al entrar.
+- **Diseño accesible.** Tema oscuro con acento dorado y tokens de color definidos en Tailwind: todos los textos superan 5,5:1 de contraste (WCAG AA) y los bordes de los campos, 3:1. Tipografías Fraunces (títulos) e Inter (texto), foco visible en todo, salto al contenido y respeto de `prefers-reduced-motion`.
 - **Arquitectura por dominios**: `products`, `checkout`, `info` y `shared`, con alias de importación (`@products`, `@checkout`, `@shared`, `@env`).
 - **SEO**: título y meta description por página, y Open Graph con imagen de preview para compartir el link.
 

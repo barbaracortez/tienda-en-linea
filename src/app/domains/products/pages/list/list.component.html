@@ -1,17 +1,151 @@
-<div class="flex flex-col gap-8 md:flex-row">
-  <aside class="md:w-56 md:flex-none">
-    <h2
-      class="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
-      Categorías
-    </h2>
-    <nav aria-label="Categorías">
+@if (!hasFilters()) {
+  <!-- Portada -->
+  <section
+    class="grid items-center gap-10 md:grid-cols-2 md:gap-16"
+    aria-labelledby="hero-title">
+    <div>
+      <p class="eyebrow">Nueva temporada</p>
+      <h1
+        id="hero-title"
+        class="heading mt-5 text-5xl leading-[1.05] sm:text-6xl lg:text-7xl">
+        Objetos simples, <em class="italic text-gold">hechos para durar.</em>
+      </h1>
+      <p class="mt-6 max-w-md text-base leading-relaxed text-fg-muted">
+        Una selección de ropa, tecnología y objetos para la casa elegidos por su
+        diseño y su calidad. Envío gratis en todos los pedidos.
+      </p>
+      <div class="mt-9 flex flex-wrap gap-3">
+        <button type="button" class="btn-primary" (click)="scrollToCatalog()">
+          Ver la colección
+        </button>
+        <a routerLink="/category/hogar" class="btn-secondary">Explorar hogar</a>
+      </div>
+    </div>
+
+    <div class="relative grid grid-cols-5 gap-4" aria-hidden="true">
+      <!-- Vistas de detalle (URLs que no se repiten en el catálogo) -->
+      <div
+        class="relative col-span-3 aspect-[4/5] overflow-hidden rounded-lg bg-surface">
+        <img
+          ngSrc="/products/sofa-terciopelo-verde-2.webp"
+          alt=""
+          fill
+          sizes="(min-width: 768px) 30vw, 60vw"
+          priority
+          class="object-cover" />
+      </div>
+      <div class="col-span-2 flex flex-col gap-4 pt-12">
+        <div class="overflow-hidden rounded-lg bg-surface">
+          <img
+            ngSrc="/products/reloj-analogico-2.webp"
+            alt=""
+            width="800"
+            height="800"
+            sizes="(min-width: 768px) 20vw, 40vw"
+            priority
+            class="aspect-square w-full object-cover" />
+        </div>
+        <div class="overflow-hidden rounded-lg bg-surface">
+          <img
+            ngSrc="/products/borcegos-cuero-2.webp"
+            alt=""
+            width="800"
+            height="800"
+            sizes="(min-width: 768px) 20vw, 40vw"
+            class="aspect-square w-full object-cover" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categorías con foto -->
+  @if (categories().length > 0) {
+    <section class="mt-24" aria-labelledby="categories-title">
+      <div class="flex items-end justify-between gap-4">
+        <h2 id="categories-title" class="heading text-3xl sm:text-4xl">
+          Comprar por categoría
+        </h2>
+      </div>
+      <ul class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        @for (category of categories(); track category.id; let i = $index) {
+          <li [class.col-span-2]="i === 0" class="sm:col-span-1">
+            <a
+              [routerLink]="['/category', category.slug]"
+              class="group relative block overflow-hidden rounded-lg bg-surface">
+              <img
+                [ngSrc]="category.image"
+                alt=""
+                width="800"
+                height="800"
+                sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
+                class="aspect-square w-full object-cover opacity-80 transition duration-700 group-hover:scale-[1.04] group-hover:opacity-100" />
+              <span
+                class="absolute inset-0 bg-gradient-to-t from-canvas/90 via-canvas/10 to-transparent"
+                aria-hidden="true"></span>
+              <span
+                class="absolute inset-x-4 bottom-4 flex items-center justify-between font-display text-xl text-fg">
+                {{ category.name }}
+                <span
+                  class="text-gold transition-transform duration-300 group-hover:translate-x-1"
+                  aria-hidden="true"
+                  >→</span
+                >
+              </span>
+            </a>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+}
+
+<!-- Catálogo -->
+<section
+  #catalogSection
+  tabindex="-1"
+  class="scroll-mt-28 outline-none focus-visible:ring-0"
+  [class.mt-24]="!hasFilters()"
+  aria-labelledby="list-title">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <!-- Sin portada, el título del catálogo es el h1 de la página -->
+      @if (hasFilters()) {
+        <p class="eyebrow">Colección</p>
+        <h1 id="list-title" class="heading mt-3 text-4xl sm:text-5xl">
+          {{ heading() }}
+        </h1>
+      } @else {
+        <h2 id="list-title" class="heading text-3xl sm:text-4xl">
+          {{ heading() }}
+        </h2>
+      }
+      @if (searchTerm()) {
+        <p class="mt-2 text-sm text-fg-muted">
+          Resultados para “<span class="text-fg">{{ searchTerm() }}</span
+          >”
+        </p>
+      }
+    </div>
+    <p class="text-sm text-fg-subtle" aria-live="polite">
+      @if (!loading() && !error()) {
+        {{ products().length }}
+        {{ products().length === 1 ? 'producto' : 'productos' }}
+      }
+    </p>
+  </div>
+
+  <!-- Barra de filtros -->
+  <div
+    class="mt-8 flex flex-col gap-4 border-y border-line py-4 lg:flex-row lg:items-center lg:justify-between">
+    <nav aria-label="Categorías" class="-mx-4 lg:mx-0">
       <ul
-        class="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 md:mx-0 md:flex-col md:gap-1 md:overflow-visible md:px-0">
+        #categoryNav
+        class="relative flex gap-2 overflow-x-auto px-4 [scrollbar-width:none] lg:px-0">
         <li>
           <a
             routerLink="/"
             queryParamsHandling="merge"
-            routerLinkActive="!border-accent !text-white bg-nightLight"
+            routerLinkActive="!border-gold !text-fg"
             [routerLinkActiveOptions]="{
               paths: 'exact',
               queryParams: 'ignored',
@@ -19,8 +153,8 @@
               fragment: 'ignored',
             }"
             ariaCurrentWhenActive="page"
-            class="block whitespace-nowrap rounded-lg border border-nightBorder px-3 py-2 text-sm text-slate-300 transition-colors hover:text-white md:border-transparent"
-            >Todas</a
+            class="block whitespace-nowrap rounded-full border border-line-strong px-4 py-2 text-sm text-fg-muted transition-colors hover:border-fg-muted hover:text-fg"
+            >Todo</a
           >
         </li>
         @for (category of categories(); track category.id) {
@@ -28,7 +162,7 @@
             <a
               [routerLink]="['/category', category.slug]"
               queryParamsHandling="merge"
-              routerLinkActive="!border-accent !text-white bg-nightLight"
+              routerLinkActive="!border-gold !text-fg"
               [routerLinkActiveOptions]="{
                 paths: 'exact',
                 queryParams: 'ignored',
@@ -36,162 +170,193 @@
                 fragment: 'ignored',
               }"
               ariaCurrentWhenActive="page"
-              class="block whitespace-nowrap rounded-lg border border-nightBorder px-3 py-2 text-sm text-slate-300 transition-colors hover:text-white md:border-transparent"
+              class="block whitespace-nowrap rounded-full border border-line-strong px-4 py-2 text-sm text-fg-muted transition-colors hover:border-fg-muted hover:text-fg"
               >{{ category.name }}</a
             >
           </li>
         }
       </ul>
     </nav>
-  </aside>
 
-  <section class="min-w-0 flex-1" aria-labelledby="list-title">
-    <div class="mb-4 flex flex-wrap items-end justify-between gap-2">
-      <div>
-        <h1 id="list-title" class="text-2xl font-bold tracking-tight">
-          {{ heading() }}
-        </h1>
-        @if (searchTerm()) {
-          <p class="mt-1 text-sm text-slate-400">
-            Resultados para “{{ searchTerm() }}”
-          </p>
-        }
-      </div>
-      <p class="text-sm text-slate-400" aria-live="polite">
-        @if (!loading() && !error()) {
-          {{ products().length }}
-          {{ products().length === 1 ? 'producto' : 'productos' }}
-        }
-      </p>
-    </div>
-
-    <!-- Filtros: orden y rango de precio -->
-    <div
-      class="mb-6 flex flex-col gap-3 rounded-xl border border-nightBorder bg-nightLight/50 p-3 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
-      <form
-        class="flex flex-wrap items-end gap-2"
-        [formGroup]="priceForm"
-        (ngSubmit)="applyPrice()"
-        aria-label="Filtrar por precio">
-        <div>
-          <label for="price-min" class="mb-1 block text-xs text-slate-400"
-            >Precio mínimo (US$)</label
-          >
-          <input
-            id="price-min"
-            type="number"
-            min="0"
-            inputmode="decimal"
-            formControlName="min"
-            placeholder="Desde"
-            class="w-28 rounded-lg border border-nightBorder bg-night px-3 py-2 text-sm focus:border-accent"
-            [attr.aria-invalid]="priceForm.invalid && priceForm.touched"
-            aria-describedby="price-error" />
-        </div>
-        <div>
-          <label for="price-max" class="mb-1 block text-xs text-slate-400"
-            >Precio máximo (US$)</label
-          >
-          <input
-            id="price-max"
-            type="number"
-            min="0"
-            inputmode="decimal"
-            formControlName="max"
-            placeholder="Sin límite"
-            class="w-28 rounded-lg border border-nightBorder bg-night px-3 py-2 text-sm focus:border-accent"
-            [attr.aria-invalid]="priceForm.invalid && priceForm.touched"
-            aria-describedby="price-error" />
-        </div>
-        <button type="submit" class="btn-secondary">Aplicar</button>
-        <p id="price-error" class="w-full text-xs text-red-300" role="alert">
-          @if (priceForm.touched && priceForm.hasError('invalidRange')) {
-            El precio mínimo no puede ser mayor que el máximo.
-          } @else if (priceForm.touched && priceForm.invalid) {
-            Los precios no pueden ser negativos.
+    <div class="flex flex-wrap items-center gap-3">
+      <details #priceMenu class="group relative">
+        <summary
+          class="flex cursor-pointer list-none items-center gap-2 rounded-full border border-line-strong px-4 py-2 text-sm text-fg-muted transition-colors hover:text-fg [&::-webkit-details-marker]:hidden"
+          [class.!border-gold]="
+            query().minPrice !== undefined || query().maxPrice !== undefined
+          "
+          [class.!text-fg]="
+            query().minPrice !== undefined || query().maxPrice !== undefined
+          ">
+          Precio
+          @if (
+            query().minPrice !== undefined || query().maxPrice !== undefined
+          ) {
+            <span class="text-gold"
+              >{{
+                query().minPrice ?? 0 | currency: 'USD' : 'symbol' : '1.0-0'
+              }}
+              –
+              {{
+                query().maxPrice !== undefined
+                  ? (query().maxPrice | currency: 'USD' : 'symbol' : '1.0-0')
+                  : 'más'
+              }}</span
+            >
           }
-        </p>
-      </form>
-
-      <div class="flex flex-wrap items-end gap-3">
-        <div>
-          <label for="sort" class="mb-1 block text-xs text-slate-400"
-            >Ordenar por</label
-          >
-          <select
-            id="sort"
-            class="rounded-lg border border-nightBorder bg-night px-3 py-2 text-sm focus:border-accent"
-            (change)="changeSort($event)">
-            @for (option of sortOptions; track option.value) {
-              <option
-                [value]="option.value"
-                [selected]="option.value === (query().sort ?? '')">
-                {{ option.label }}
-              </option>
+          <svg
+            class="h-3.5 w-3.5 transition-transform group-open:rotate-180"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2">
+            <path stroke-linecap="round" d="m6 9 6 6 6-6" />
+          </svg>
+        </summary>
+        <form
+          class="absolute left-0 z-20 mt-2 w-72 rounded-lg border border-line-strong bg-surface p-5 shadow-soft lg:left-auto lg:right-0"
+          [formGroup]="priceForm"
+          (ngSubmit)="applyPrice()"
+          aria-label="Filtrar por precio">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="price-min" class="mb-1.5 block text-xs text-fg-muted"
+                >Mínimo (US$)</label
+              >
+              <input
+                id="price-min"
+                type="number"
+                min="0"
+                inputmode="decimal"
+                formControlName="min"
+                placeholder="0"
+                class="field py-2"
+                [attr.aria-invalid]="priceForm.invalid && priceForm.touched"
+                aria-describedby="price-error" />
+            </div>
+            <div>
+              <label for="price-max" class="mb-1.5 block text-xs text-fg-muted"
+                >Máximo (US$)</label
+              >
+              <input
+                id="price-max"
+                type="number"
+                min="0"
+                inputmode="decimal"
+                formControlName="max"
+                placeholder="Sin límite"
+                class="field py-2"
+                [attr.aria-invalid]="priceForm.invalid && priceForm.touched"
+                aria-describedby="price-error" />
+            </div>
+          </div>
+          <p
+            id="price-error"
+            class="mt-2 min-h-4 text-xs text-error"
+            role="alert">
+            @if (priceForm.touched && priceForm.hasError('invalidRange')) {
+              El mínimo no puede ser mayor que el máximo.
+            } @else if (priceForm.touched && priceForm.invalid) {
+              Los precios no pueden ser negativos.
             }
-          </select>
-        </div>
-        @if (hasFilters()) {
-          <button
-            type="button"
-            class="py-2 text-sm text-slate-300 underline-offset-4 hover:text-white hover:underline"
-            (click)="clearFilters()">
-            Limpiar filtros
+          </p>
+          <button type="submit" class="btn-primary mt-2 w-full py-2.5">
+            Aplicar
           </button>
-        }
-      </div>
-    </div>
+        </form>
+      </details>
 
+      <div class="relative">
+        <label for="sort" class="sr-only">Ordenar por</label>
+        <select
+          id="sort"
+          class="cursor-pointer appearance-none rounded-full border border-line-strong bg-canvas py-2 pl-4 pr-10 text-sm text-fg-muted transition-colors hover:text-fg focus:border-gold"
+          (change)="changeSort($event)">
+          @for (option of sortOptions; track option.value) {
+            <option
+              [value]="option.value"
+              [selected]="option.value === (query().sort ?? '')">
+              {{ option.value ? option.label : 'Ordenar: destacados' }}
+            </option>
+          }
+        </select>
+        <svg
+          class="pointer-events-none absolute right-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-fg-muted"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2">
+          <path stroke-linecap="round" d="m6 9 6 6 6-6" />
+        </svg>
+      </div>
+
+      @if (hasFilters()) {
+        <button
+          type="button"
+          class="px-2 py-2 text-sm text-gold underline decoration-gold/40 underline-offset-4 hover:decoration-gold"
+          (click)="clearFilters()">
+          Limpiar filtros
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Resultados -->
+  <div class="mt-10">
     @if (loading()) {
       <div
-        class="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4"
+        class="grid grid-cols-2 gap-x-5 gap-y-12 md:grid-cols-3 xl:grid-cols-4"
         aria-busy="true"
         aria-label="Cargando productos">
         @for (i of skeletons; track i) {
-          <div class="space-y-3">
+          <div>
             <div class="skeleton aspect-square"></div>
-            <div class="skeleton h-4 w-3/4"></div>
-            <div class="skeleton h-6 w-1/3"></div>
+            <div class="skeleton mt-4 h-3 w-1/4"></div>
+            <div class="skeleton mt-3 h-4 w-3/4"></div>
+            <div class="skeleton mt-3 h-3 w-1/5"></div>
           </div>
         }
       </div>
     } @else if (error()) {
       <div
-        class="rounded-xl border border-red-500/30 bg-red-500/10 p-8 text-center"
+        class="mx-auto max-w-md rounded-lg border border-error/30 bg-error/10 p-10 text-center"
         role="alert">
-        <p class="font-medium text-red-300">No pudimos cargar los productos.</p>
-        <p class="mt-1 text-sm text-slate-400">
+        <p class="heading text-2xl">No pudimos cargar los productos</p>
+        <p class="mt-2 text-sm text-fg-muted">
           Revisá tu conexión e intentá de nuevo.
         </p>
-        <button type="button" class="btn-primary mt-4" (click)="reload()">
+        <button type="button" class="btn-primary mt-6" (click)="reload()">
           Reintentar
         </button>
       </div>
     } @else if (products().length === 0) {
-      <div class="rounded-xl border border-nightBorder px-6 py-12 text-center">
-        <p class="text-4xl" aria-hidden="true">🔍</p>
-        <p class="mt-3 text-lg font-medium">No encontramos productos</p>
-        <p class="mx-auto mt-1 max-w-sm text-sm text-slate-400">
+      <div class="mx-auto max-w-md py-16 text-center">
+        <p class="heading text-3xl">Sin resultados</p>
+        <p class="mt-3 text-sm leading-relaxed text-fg-muted">
           Ningún producto coincide con los filtros elegidos. Probá con otra
-          búsqueda, otro rango de precio o explorá todo el catálogo.
+          búsqueda, otro rango de precio o explorá toda la colección.
         </p>
-        <button type="button" class="btn-primary mt-5" (click)="clearFilters()">
+        <button type="button" class="btn-primary mt-8" (click)="clearFilters()">
           Limpiar filtros
         </button>
       </div>
     } @else {
       <ul
-        class="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4"
+        class="grid grid-cols-2 gap-x-5 gap-y-12 md:grid-cols-3 xl:grid-cols-4"
         aria-label="Productos">
         @for (product of products(); track product.id; let i = $index) {
           <li>
             <app-product
               [product]="product"
-              [priority]="i < 4"
+              [priority]="hasFilters() && i < 4"
               (addToCart)="addToCart($event)" />
           </li>
         }
       </ul>
     }
-  </section>
-</div>
+  </div>
+</section>

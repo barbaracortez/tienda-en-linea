@@ -1,10 +1,13 @@
+import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import {
   Component,
+  ElementRef,
   computed,
   effect,
   inject,
   input,
   signal,
+  viewChild,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -42,6 +45,8 @@ const priceRangeValidator = (
 @Component({
   selector: 'app-list',
   imports: [
+    CurrencyPipe,
+    NgOptimizedImage,
     ProductComponent,
     RouterLink,
     RouterLinkActive,
@@ -63,6 +68,13 @@ export default class ListComponent {
   readonly max = input<string>();
 
   readonly sortOptions = SORT_OPTIONS;
+
+  private readonly priceMenu =
+    viewChild<ElementRef<HTMLDetailsElement>>('priceMenu');
+  private readonly catalogSection =
+    viewChild<ElementRef<HTMLElement>>('catalogSection');
+  private readonly categoryNav =
+    viewChild<ElementRef<HTMLElement>>('categoryNav');
   readonly skeletons = Array.from({ length: 8 }, (_, i) => i);
 
   readonly query = computed(() =>
@@ -120,6 +132,21 @@ export default class ListComponent {
   });
 
   constructor() {
+    // En móvil, la categoría activa puede quedar fuera de la barra con scroll.
+    effect(() => {
+      this.query();
+      this.categories();
+      setTimeout(() => {
+        const nav = this.categoryNav()?.nativeElement;
+        const active = nav?.querySelector<HTMLElement>('[aria-current=page]');
+        if (nav && active) {
+          // Solo desplaza la barra horizontal, nunca la página.
+          nav.scrollLeft =
+            active.offsetLeft - (nav.clientWidth - active.clientWidth) / 2;
+        }
+      });
+    });
+
     // URL → formulario de precio (al navegar, recargar o limpiar filtros).
     effect(() => {
       const { minPrice, maxPrice } = this.query();
@@ -142,6 +169,14 @@ export default class ListComponent {
     }
     const { min, max } = this.priceForm.getRawValue();
     this.updateQueryParams({ min, max });
+    this.priceMenu()?.nativeElement.removeAttribute('open');
+  }
+
+  /** Botón de la portada: lleva el foco y la vista al catálogo. */
+  scrollToCatalog() {
+    const section = this.catalogSection()?.nativeElement;
+    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    section?.focus({ preventScroll: true });
   }
 
   clearFilters() {

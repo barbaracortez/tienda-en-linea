@@ -26,19 +26,19 @@ export const CATEGORIES: Category[] = [
     id: 3,
     name: 'Hogar',
     slug: 'hogar',
-    image: '/products/sofa-terciopelo-verde-1.webp',
+    image: '/products/lampara-colgante-1.webp',
   },
   {
     id: 4,
     name: 'Calzado',
     slug: 'calzado',
-    image: '/products/borcegos-cuero-1.webp',
+    image: '/products/zapatillas-urbanas-bordo-1.webp',
   },
   {
     id: 5,
     name: 'Accesorios',
     slug: 'accesorios',
-    image: '/products/reloj-analogico-1.webp',
+    image: '/products/anteojos-sol-redondos-1.webp',
   },
 ];
 

@@ -1,64 +1,64 @@
-<a
-  routerLink="/"
-  class="mb-6 inline-flex items-center gap-1 text-sm text-slate-400 hover:text-white">
-  <span aria-hidden="true">←</span> Volver a productos
-</a>
-
 @if (loading()) {
   <div
-    class="grid gap-8 md:grid-cols-2"
+    class="grid gap-10 md:grid-cols-2 lg:gap-16"
     aria-busy="true"
     aria-label="Cargando producto">
     <div class="skeleton aspect-square"></div>
-    <div class="space-y-4">
-      <div class="skeleton h-4 w-24"></div>
-      <div class="skeleton h-8 w-3/4"></div>
+    <div class="space-y-5 md:pt-10">
+      <div class="skeleton h-3 w-24"></div>
+      <div class="skeleton h-12 w-3/4"></div>
+      <div class="skeleton h-5 w-28"></div>
       <div class="skeleton h-24 w-full"></div>
-      <div class="skeleton h-10 w-40"></div>
+      <div class="skeleton h-12 w-full rounded-full"></div>
     </div>
   </div>
 } @else if (error()) {
-  <div
-    class="rounded-xl border border-nightBorder p-10 text-center"
-    role="alert">
-    <p class="text-lg font-medium">No encontramos este producto</p>
-    <p class="mt-1 text-sm text-slate-400">
+  <div class="mx-auto max-w-md py-16 text-center" role="alert">
+    <p class="heading text-3xl">No encontramos este producto</p>
+    <p class="mt-3 text-sm text-fg-muted">
       Puede que ya no esté disponible o que el enlace sea incorrecto.
     </p>
-    <div class="mt-4 flex justify-center gap-3">
+    <div class="mt-8 flex justify-center gap-3">
       <button type="button" class="btn-secondary" (click)="reload()">
         Reintentar
       </button>
-      <a routerLink="/" class="btn-primary">Ver productos</a>
+      <a routerLink="/" class="btn-primary">Ver la colección</a>
     </div>
   </div>
 } @else {
   @let item = product();
   @if (item) {
-    <div class="grid gap-8 md:grid-cols-2 lg:gap-12">
-      <div class="space-y-3">
-        <div
-          class="aspect-square overflow-hidden rounded-xl border border-nightBorder bg-nightLight">
-          <img
-            appImgFallback
-            [ngSrc]="cover()"
-            [alt]="coverAlt()"
-            width="800"
-            height="800"
-            sizes="(min-width: 768px) 50vw, 100vw"
-            priority
-            class="h-full w-full object-cover" />
-        </div>
+    <nav aria-label="Ruta de navegación" class="mb-8 text-sm text-fg-subtle">
+      <ol class="flex flex-wrap items-center gap-2">
+        <li><a routerLink="/" class="hover:text-fg">Tienda</a></li>
+        <li aria-hidden="true">/</li>
+        <li>
+          <a
+            [routerLink]="['/category', item.category.slug]"
+            class="hover:text-fg"
+            >{{ item.category.name }}</a
+          >
+        </li>
+        <li aria-hidden="true">/</li>
+        <li class="text-fg-muted" aria-current="page">{{ item.title }}</li>
+      </ol>
+    </nav>
 
+    <div class="grid gap-10 md:grid-cols-2 lg:gap-16">
+      <!-- Galería -->
+      <div class="flex flex-col-reverse gap-4 lg:flex-row">
         @if (item.images.length > 1) {
-          <ul class="grid grid-cols-4 gap-3" aria-label="Galería de imágenes">
+          <ul
+            class="flex gap-3 lg:w-20 lg:flex-col"
+            aria-label="Galería de imágenes">
             @for (image of item.images; track image; let i = $index) {
-              <li>
+              <li class="w-20 lg:w-full">
                 <button
                   type="button"
-                  class="block aspect-square w-full overflow-hidden rounded-lg border-2 transition-colors"
-                  [class.border-accent]="image === cover()"
+                  class="block aspect-square w-full overflow-hidden rounded-md border transition"
+                  [class.border-gold]="image === cover()"
                   [class.border-transparent]="image !== cover()"
+                  [class.opacity-60]="image !== cover()"
                   [attr.aria-pressed]="image === cover()"
                   [attr.aria-label]="
                     'Ver imagen ' + (i + 1) + ' de ' + item.images.length
@@ -80,55 +80,101 @@
             }
           </ul>
         }
+        <div class="flex-1 overflow-hidden rounded-lg bg-surface">
+          <img
+            appImgFallback
+            [ngSrc]="cover()"
+            [alt]="coverAlt()"
+            width="800"
+            height="800"
+            sizes="(min-width: 768px) 45vw, 100vw"
+            priority
+            class="aspect-square h-full w-full object-cover" />
+        </div>
       </div>
 
-      <div class="flex flex-col">
-        <a
-          [routerLink]="['/category', item.category.slug]"
-          class="text-xs font-semibold uppercase tracking-wider text-accent-light hover:underline"
-          >{{ item.category.name }}</a
-        >
-        <h1 class="mt-2 text-3xl font-bold tracking-tight">{{ item.title }}</h1>
-        <p class="mt-4 text-3xl font-semibold text-white">
-          {{ item.price | currency }}
-        </p>
-        <p class="mt-6 leading-relaxed text-slate-300">
+      <!-- Información -->
+      <div class="flex flex-col md:pt-6">
+        <p class="eyebrow">{{ item.category.name }}</p>
+        <h1 class="heading mt-4 text-4xl leading-tight lg:text-5xl">
+          {{ item.title }}
+        </h1>
+        <p class="mt-5 text-xl text-fg">{{ item.price | currency }}</p>
+
+        <p class="mt-8 max-w-prose leading-relaxed text-fg-muted">
           {{ item.description }}
         </p>
 
-        <div class="mt-8 flex flex-wrap items-center gap-3">
-          <div
-            class="flex items-center rounded-lg border border-nightBorder"
-            role="group"
-            aria-label="Cantidad">
+        <div class="mt-10 border-t border-line pt-8">
+          <div class="flex flex-wrap items-center gap-3">
+            <div
+              class="flex items-center rounded-full border border-line-field"
+              role="group"
+              aria-label="Cantidad">
+              <button
+                type="button"
+                class="flex h-12 w-11 items-center justify-center rounded-l-full text-fg-muted hover:text-fg disabled:opacity-40"
+                (click)="decrease()"
+                [disabled]="quantity() <= 1"
+                aria-label="Restar uno">
+                −
+              </button>
+              <span class="min-w-8 text-center" aria-live="polite">{{
+                quantity()
+              }}</span>
+              <button
+                type="button"
+                class="flex h-12 w-11 items-center justify-center rounded-r-full text-fg-muted hover:text-fg disabled:opacity-40"
+                (click)="increase()"
+                [disabled]="quantity() >= maxQuantity"
+                aria-label="Sumar uno">
+                +
+              </button>
+            </div>
             <button
               type="button"
-              class="px-3 py-2.5 text-slate-300 hover:text-white disabled:opacity-40"
-              (click)="decrease()"
-              [disabled]="quantity() <= 1"
-              aria-label="Restar uno">
-              −
-            </button>
-            <span class="min-w-10 text-center font-medium" aria-live="polite">{{
-              quantity()
-            }}</span>
-            <button
-              type="button"
-              class="px-3 py-2.5 text-slate-300 hover:text-white disabled:opacity-40"
-              (click)="increase()"
-              [disabled]="quantity() >= maxQuantity"
-              aria-label="Sumar uno">
-              +
+              class="btn-primary h-12 flex-1"
+              (click)="addToCart()">
+              Agregar al carrito
             </button>
           </div>
-          <button type="button" class="btn-primary" (click)="addToCart()">
-            Agregar al carrito
-          </button>
-          <button type="button" class="btn-secondary" (click)="buyNow()">
+          <button
+            type="button"
+            class="btn-secondary mt-3 h-12 w-full"
+            (click)="buyNow()">
             Comprar ahora
           </button>
         </div>
+
+        <ul class="mt-10 space-y-3 text-sm text-fg-muted">
+          @for (perk of perks; track perk) {
+            <li class="flex items-center gap-3">
+              <span
+                class="h-1.5 w-1.5 rounded-full bg-gold"
+                aria-hidden="true"></span>
+              {{ perk }}
+            </li>
+          }
+        </ul>
       </div>
     </div>
+
+    <!-- Relacionados -->
+    @if (related().length > 0) {
+      <section class="mt-28" aria-labelledby="related-title">
+        <h2 id="related-title" class="heading text-3xl">
+          También te puede gustar
+        </h2>
+        <ul class="mt-8 grid grid-cols-2 gap-x-5 gap-y-12 md:grid-cols-4">
+          @for (product of related(); track product.id) {
+            <li>
+              <app-product
+                [product]="product"
+                (addToCart)="addRelated($event)" />
+            </li>
+          }
+        </ul>
+      </section>
+    }
   }
 }

@@ -22,7 +22,7 @@ export class HeaderComponent {
   readonly menuOpen = signal(false);
 
   readonly links = [
-    { label: 'Productos', path: '/', exact: true },
+    { label: 'Tienda', path: '/', exact: true },
     { label: 'Sobre el proyecto', path: '/about', exact: false },
   ];
 

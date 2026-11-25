@@ -1,11 +1,23 @@
+<!-- Aviso de demo: discreto, siempre visible y sin tapar el contenido -->
+<div class="border-b border-line bg-surface">
+  <p
+    class="container mx-auto px-4 py-2 text-center text-xs tracking-wide text-fg-muted">
+    <span class="font-medium text-gold">Proyecto demo</span>
+    <span aria-hidden="true"> · </span>
+    <span class="hidden sm:inline"
+      >Productos de ejemplo y compras simuladas: </span
+    >no se cobra nada.
+  </p>
+</div>
+
 <header
-  class="sticky top-0 z-30 border-b border-nightBorder bg-night/90 backdrop-blur">
+  class="sticky top-0 z-30 border-b border-line bg-canvas/85 backdrop-blur-md">
   <nav
-    class="container mx-auto flex flex-wrap items-center gap-4 px-4 py-3"
+    class="container mx-auto flex flex-wrap items-center gap-x-6 gap-y-3 px-4 py-4"
     aria-label="Navegación principal">
     <button
       type="button"
-      class="icon-btn md:hidden"
+      class="icon-btn -ml-2 md:hidden"
       (click)="toggleMenu()"
       aria-controls="main-menu"
       [attr.aria-expanded]="menuOpen()">
@@ -17,38 +29,38 @@
         aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
-        viewBox="0 0 17 14">
-        <path
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-width="2"
-          d="M1 1h15M1 7h15M1 13h15" />
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="1.5">
+        @if (menuOpen()) {
+          <path stroke-linecap="round" d="M6 18 18 6M6 6l12 12" />
+        } @else {
+          <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
+        }
       </svg>
     </button>
 
-    <a routerLink="/" class="text-xl font-bold tracking-tight text-white">
-      Ng<span class="text-accent-light">Store</span>
+    <a
+      routerLink="/"
+      class="font-display text-2xl font-normal tracking-tight text-fg"
+      aria-label="NgStore, ir al inicio">
+      NgStore<span class="text-gold" aria-hidden="true">.</span>
     </a>
-    <span
-      class="rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-xs font-medium text-amber-200"
-      title="Proyecto de portfolio: los productos y las compras son de ejemplo">
-      Proyecto demo<span class="hidden lg:inline"> · datos de ejemplo</span>
-    </span>
 
     <div
       id="main-menu"
-      class="order-last w-full flex-col gap-4 md:order-none md:flex md:w-auto md:flex-1 md:flex-row md:items-center"
+      class="order-last w-full flex-col gap-4 pb-2 md:order-none md:flex md:w-auto md:flex-1 md:flex-row md:items-center md:pb-0"
       [class.flex]="menuOpen()"
       [class.hidden]="!menuOpen()">
-      <ul class="flex flex-col gap-1 md:flex-row md:gap-2">
+      <ul class="flex flex-col gap-1 md:flex-row md:gap-6">
         @for (link of links; track link.path) {
           <li>
             <a
               [routerLink]="link.path"
-              routerLinkActive="!text-white bg-nightLight"
+              routerLinkActive="!text-fg underline decoration-gold decoration-1 underline-offset-[10px]"
               ariaCurrentWhenActive="page"
               [routerLinkActiveOptions]="{ exact: link.exact }"
-              class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition-colors hover:text-white"
+              class="block py-2 text-sm text-fg-muted transition-colors hover:text-fg"
               >{{ link.label }}</a
             >
           </li>
@@ -59,26 +71,29 @@
 
     <button
       type="button"
-      class="icon-btn relative ml-auto md:ml-0"
+      class="icon-btn relative -mr-2 ml-auto md:ml-0"
       (click)="openCart()"
       aria-controls="cart-drawer">
-      <span class="sr-only">Abrir carrito ({{ cartCount() }} productos)</span>
+      <span class="sr-only"
+        >Abrir carrito, {{ cartCount() }}
+        {{ cartCount() === 1 ? 'producto' : 'productos' }}</span
+      >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
-        stroke-width="1.5"
+        stroke-width="1.25"
         stroke="currentColor"
         class="h-6 w-6"
         aria-hidden="true">
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
-          d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+          d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z" />
       </svg>
       @if (cartCount() > 0) {
         <span
-          class="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-semibold text-white"
+          class="absolute right-0.5 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-gold px-1 text-[11px] font-semibold text-canvas"
           aria-hidden="true">
           {{ cartCount() }}
         </span>

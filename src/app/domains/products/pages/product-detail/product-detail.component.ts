@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { combineLatest, switchMap, tap } from 'rxjs';
+import { combineLatest, map, of, switchMap, tap } from 'rxjs';
+import { ProductComponent } from '@products/components/product/product.component';
 import {
   IMAGE_PLACEHOLDER,
   ImgFallbackDirective,
@@ -26,7 +27,13 @@ const MAX_QUANTITY = 10;
 
 @Component({
   selector: 'app-product-detail',
-  imports: [CurrencyPipe, NgOptimizedImage, RouterLink, ImgFallbackDirective],
+  imports: [
+    CurrencyPipe,
+    NgOptimizedImage,
+    RouterLink,
+    ImgFallbackDirective,
+    ProductComponent,
+  ],
   templateUrl: './product-detail.component.html',
 })
 export default class ProductDetailComponent {
@@ -76,6 +83,28 @@ export default class ProductDetailComponent {
       : product.title;
   });
 
+  /** Hasta 4 productos de la misma categoría. */
+  readonly related = toSignal(
+    toObservable(this.product).pipe(
+      switchMap(product =>
+        product
+          ? this.catalog
+              .getProducts({ categorySlug: product.category.slug })
+              .pipe(
+                map(list => list.filter(p => p.id !== product.id).slice(0, 4))
+              )
+          : of([])
+      )
+    ),
+    { initialValue: [] as Product[] }
+  );
+
+  readonly perks = [
+    'Envío gratis a todo el país',
+    'Cambios sin cargo durante 30 días',
+    'Compra simulada: no se cobra nada',
+  ];
+
   constructor() {
     effect(() => {
       const product = this.product();
@@ -117,6 +146,11 @@ export default class ProductDetailComponent {
       return;
     }
     this.cartService.add(product, this.quantity());
+    this.toast.show(`“${product.title}” se agregó al carrito`);
+  }
+
+  addRelated(product: Product) {
+    this.cartService.add(product);
     this.toast.show(`“${product.title}” se agregó al carrito`);
   }
 

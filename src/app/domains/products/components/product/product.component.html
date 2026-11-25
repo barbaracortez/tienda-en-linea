@@ -1,43 +1,54 @@
 @let item = product();
 
-<article
-  class="group flex h-full flex-col overflow-hidden rounded-xl border border-nightBorder bg-nightLight transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-soft">
-  <a
-    [routerLink]="['/product', item.slug]"
-    class="block aspect-square overflow-hidden bg-night"
-    tabindex="-1"
-    aria-hidden="true">
-    <img
-      appImgFallback
-      [ngSrc]="cover()"
-      [alt]="item.title"
-      width="800"
-      height="800"
-      sizes="(min-width: 1280px) 250px, (min-width: 1024px) 30vw, 50vw"
-      [priority]="priority()"
-      class="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
-  </a>
+<article class="group relative flex h-full flex-col">
+  <div class="relative overflow-hidden rounded-lg bg-surface">
+    <a
+      [routerLink]="['/product', item.slug]"
+      class="block aspect-square"
+      tabindex="-1"
+      aria-hidden="true">
+      <img
+        appImgFallback
+        [ngSrc]="cover()"
+        [alt]="item.title"
+        width="800"
+        height="800"
+        sizes="(min-width: 1280px) 22vw, (min-width: 768px) 30vw, 50vw"
+        [priority]="priority()"
+        class="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]" />
+    </a>
 
-  <div class="flex flex-1 flex-col gap-1 p-4">
-    <p class="text-xs font-medium uppercase tracking-wider text-slate-400">
+    <!-- Visible al pasar el mouse o con foco; siempre visible en pantallas táctiles -->
+    <button
+      type="button"
+      class="absolute inset-x-3 bottom-3 flex translate-y-2 items-center justify-center gap-2 rounded-full bg-canvas/90 px-4 py-2.5 text-sm font-medium text-fg opacity-0 backdrop-blur transition duration-300 hover:bg-gold hover:text-canvas focus-visible:translate-y-0 focus-visible:opacity-100 group-hover:translate-y-0 group-hover:opacity-100 [@media(hover:none)]:translate-y-0 [@media(hover:none)]:opacity-100"
+      [attr.aria-label]="'Agregar ' + item.title + ' al carrito'"
+      (click)="addToCartHandler()">
+      <svg
+        class="h-4 w-4"
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="1.5">
+        <path stroke-linecap="round" d="M12 5v14M5 12h14" />
+      </svg>
+      Agregar
+    </button>
+  </div>
+
+  <div class="mt-4 flex flex-1 flex-col">
+    <p class="text-[11px] uppercase tracking-eyebrow text-fg-subtle">
       {{ item.category.name }}
     </p>
-    <h3 class="line-clamp-2 text-sm font-medium text-slate-100">
+    <h3 class="mt-1.5 text-[15px] leading-snug text-fg">
       <a
         [routerLink]="['/product', item.slug]"
-        class="hover:text-accent-light"
+        class="decoration-gold/60 underline-offset-4 hover:underline"
         >{{ item.title }}</a
       >
     </h3>
-    <p class="mt-auto pt-2 text-lg font-semibold text-white">
-      {{ item.price | currency }}
-    </p>
-    <button
-      type="button"
-      class="btn-secondary mt-2 w-full"
-      [attr.aria-label]="'Agregar ' + item.title + ' al carrito'"
-      (click)="addToCartHandler()">
-      Agregar al carrito
-    </button>
+    <p class="mt-2 text-sm text-fg-muted">{{ item.price | currency }}</p>
   </div>
 </article>

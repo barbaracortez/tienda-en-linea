@@ -1,45 +1,46 @@
 <a
   routerLink="/"
-  class="mb-6 inline-flex items-center gap-1 text-sm text-slate-400 hover:text-white">
+  class="mb-6 inline-flex items-center gap-1 text-sm text-fg-muted hover:text-fg">
   <span aria-hidden="true">←</span> Seguir comprando
 </a>
 
-<h1 class="text-3xl font-bold tracking-tight">Finalizar compra</h1>
+<h1 class="heading text-4xl sm:text-5xl">Finalizar compra</h1>
 
 <p
-  class="mt-4 flex items-start gap-2 rounded-lg border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
-  <span aria-hidden="true">ℹ️</span>
+  class="mt-6 flex items-start gap-3 rounded-lg border border-gold/30 bg-gold/10 px-5 py-4 text-sm text-fg-muted">
   <span
-    ><strong>Compra simulada.</strong> Es un proyecto de portfolio: no se cobra
-    nada, no se piden datos de pago y no se envía ningún pedido.</span
+    class="mt-1.5 h-1.5 w-1.5 flex-none rounded-full bg-gold"
+    aria-hidden="true"></span>
+  <span
+    ><strong class="font-medium text-gold">Compra simulada.</strong> Es un
+    proyecto de portfolio: no se cobra nada, no se piden datos de pago y no se
+    envía ningún pedido.</span
   >
 </p>
 
 <!-- Pasos -->
-<ol class="mt-6 flex flex-wrap items-center gap-2 text-sm" aria-label="Pasos">
+<ol class="mt-10 flex flex-wrap items-center gap-3 text-sm" aria-label="Pasos">
   @for (s of ['details', 'review']; track s; let i = $index) {
     <li
       class="flex items-center gap-2"
       [attr.aria-current]="step() === s ? 'step' : null">
       <span
         class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold"
-        [class.bg-accent]="step() === s"
-        [class.text-white]="step() === s"
-        [class.bg-nightLight]="step() !== s"
-        [class.text-slate-400]="step() !== s"
+        [class.bg-gold]="step() === s"
+        [class.text-canvas]="step() === s"
+        [class.bg-raised]="step() !== s"
+        [class.text-fg-muted]="step() !== s"
         >{{ i + 1 }}</span
       >
-      <span
-        [class.text-white]="step() === s"
-        [class.text-slate-400]="step() !== s">
+      <span [class.text-fg]="step() === s" [class.text-fg-muted]="step() !== s">
         {{ s === 'details' ? 'Tus datos' : 'Revisión' }}
       </span>
-      <span class="text-slate-600" aria-hidden="true">→</span>
+      <span class="text-fg-subtle" aria-hidden="true">→</span>
     </li>
   }
-  <li class="flex items-center gap-2 text-slate-400">
+  <li class="flex items-center gap-2 text-fg-muted">
     <span
-      class="flex h-6 w-6 items-center justify-center rounded-full bg-nightLight text-xs font-semibold"
+      class="flex h-6 w-6 items-center justify-center rounded-full bg-raised text-xs font-semibold"
       >3</span
     >
     Confirmación
@@ -47,22 +48,22 @@
 </ol>
 
 @if (items().length === 0) {
-  <div class="mt-8 rounded-xl border border-nightBorder p-10 text-center">
-    <p class="text-lg font-medium">Tu carrito está vacío</p>
+  <div class="mt-10 rounded-lg border border-line p-12 text-center">
+    <p class="heading text-2xl">Tu carrito está vacío</p>
     <a routerLink="/" class="btn-primary mt-4">Ver productos</a>
   </div>
 } @else {
-  <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_22rem]">
+  <div class="mt-10 grid gap-12 lg:grid-cols-[1fr_24rem]">
     <section aria-labelledby="step-title">
       @if (step() === 'details') {
         <h2
           id="step-title"
           #stepHeading
           tabindex="-1"
-          class="text-xl font-semibold focus:outline-none">
+          class="heading text-2xl outline-none focus-visible:ring-0">
           Datos de envío
         </h2>
-        <p class="mt-1 text-sm text-slate-400">
+        <p class="mt-1 text-sm text-fg-muted">
           Todos los campos son obligatorios.
         </p>
 
@@ -76,7 +77,7 @@
             <div [class]="field.wide ? 'sm:col-span-2' : ''">
               <label
                 [for]="field.name"
-                class="mb-1.5 block text-sm font-medium text-slate-200"
+                class="mb-1.5 block text-sm font-medium text-fg"
                 >{{ field.label }}</label
               >
               <input
@@ -91,19 +92,18 @@
                   field.name +
                   '-error'
                 "
-                class="block w-full rounded-lg border bg-nightLight px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-400 focus:border-accent"
-                [class.border-red-400]="error"
-                [class.border-nightBorder]="!error" />
+                class="field"
+                [class.!border-error]="error" />
               @if (field.hint) {
                 <p
                   [id]="field.name + '-hint'"
-                  class="mt-1 text-xs text-slate-400">
+                  class="mt-1 text-xs text-fg-muted">
                   {{ field.hint }}
                 </p>
               }
               <p
                 [id]="field.name + '-error'"
-                class="mt-1 min-h-4 text-xs text-red-300"
+                class="mt-1 min-h-4 text-xs text-error"
                 aria-live="polite">
                 {{ error }}
               </p>
@@ -121,32 +121,31 @@
           id="step-title"
           #stepHeading
           tabindex="-1"
-          class="text-xl font-semibold focus:outline-none">
+          class="heading text-2xl outline-none focus-visible:ring-0">
           Revisá tu pedido
         </h2>
 
-        <div
-          class="mt-6 rounded-xl border border-nightBorder bg-nightLight p-5">
+        <div class="mt-6 rounded-lg border border-line bg-surface p-6">
           <div class="flex items-start justify-between gap-4">
             <h3 class="font-medium">Envío a</h3>
             <button
               type="button"
-              class="text-sm text-accent-light hover:underline"
+              class="text-sm text-gold hover:underline"
               (click)="editDetails()">
               Editar datos
             </button>
           </div>
           <dl class="mt-3 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
             <div>
-              <dt class="text-slate-400">Nombre</dt>
+              <dt class="text-fg-muted">Nombre</dt>
               <dd>{{ customer.fullName }}</dd>
             </div>
             <div>
-              <dt class="text-slate-400">Email</dt>
+              <dt class="text-fg-muted">Email</dt>
               <dd class="break-all">{{ customer.email }}</dd>
             </div>
             <div class="sm:col-span-2">
-              <dt class="text-slate-400">Dirección</dt>
+              <dt class="text-fg-muted">Dirección</dt>
               <dd>
                 {{ customer.address }}, {{ customer.city }} ({{
                   customer.postalCode
@@ -157,7 +156,7 @@
         </div>
 
         @if (submitError()) {
-          <p class="mt-4 text-sm text-red-300" role="alert">
+          <p class="mt-4 text-sm text-error" role="alert">
             No pudimos procesar el pedido. Intentá de nuevo.
           </p>
         }
@@ -171,7 +170,7 @@
             (click)="confirmOrder()">
             @if (submitting()) {
               <span
-                class="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
+                class="h-4 w-4 animate-spin rounded-full border-2 border-canvas/30 border-t-canvas"
                 aria-hidden="true"></span>
               Procesando…
             } @else {
@@ -191,12 +190,12 @@
 
     <!-- Resumen -->
     <aside
-      class="h-fit rounded-xl border border-nightBorder bg-nightLight p-5 lg:sticky lg:top-24"
+      class="h-fit rounded-lg border border-line bg-surface p-6 lg:sticky lg:top-28"
       aria-labelledby="summary-title">
-      <h2 id="summary-title" class="font-semibold">
+      <h2 id="summary-title" class="heading text-xl">
         Resumen ({{ count() }} {{ count() === 1 ? 'producto' : 'productos' }})
       </h2>
-      <ul class="mt-4 divide-y divide-nightBorder">
+      <ul class="mt-4 divide-y divide-line">
         @for (item of items(); track item.product.id) {
           <li class="flex gap-3 py-3">
             <img
@@ -205,10 +204,10 @@
               alt=""
               width="56"
               height="56"
-              class="h-14 w-14 flex-none rounded-lg bg-night object-cover" />
+              class="h-14 w-14 flex-none rounded-md bg-raised object-cover" />
             <div class="min-w-0 flex-1 text-sm">
               <p class="line-clamp-2">{{ item.product.title }}</p>
-              <p class="text-slate-400">Cantidad: {{ item.quantity }}</p>
+              <p class="text-fg-muted">Cantidad: {{ item.quantity }}</p>
             </div>
             <p class="text-sm font-medium">
               {{ item.product.price * item.quantity | currency }}
@@ -216,18 +215,19 @@
           </li>
         }
       </ul>
-      <dl class="mt-4 space-y-2 border-t border-nightBorder pt-4 text-sm">
+      <dl class="mt-4 space-y-2 border-t border-line pt-4 text-sm">
         <div class="flex justify-between">
-          <dt class="text-slate-400">Subtotal</dt>
+          <dt class="text-fg-muted">Subtotal</dt>
           <dd>{{ total() | currency }}</dd>
         </div>
         <div class="flex justify-between">
-          <dt class="text-slate-400">Envío</dt>
-          <dd class="text-emerald-300">Gratis</dd>
+          <dt class="text-fg-muted">Envío</dt>
+          <dd class="text-success">Gratis</dd>
         </div>
-        <div class="flex justify-between text-base font-semibold">
+        <div
+          class="flex items-baseline justify-between border-t border-line pt-3 text-base">
           <dt>Total</dt>
-          <dd>{{ total() | currency }}</dd>
+          <dd class="font-display text-2xl">{{ total() | currency }}</dd>
         </div>
       </dl>
     </aside>

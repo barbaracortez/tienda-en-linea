@@ -8,32 +8,62 @@
   }
 
   body {
-    @apply min-h-screen bg-night font-sans text-slate-100 antialiased;
+    @apply min-h-screen bg-canvas font-sans text-fg antialiased;
+  }
+
+  ::selection {
+    @apply bg-gold text-canvas;
   }
 
   :focus-visible {
-    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-night;
+    @apply outline-none ring-2 ring-gold ring-offset-2 ring-offset-canvas;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium tracking-wide transition duration-200 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-primary {
-    @apply btn bg-accent text-white hover:bg-blue-700;
+    @apply btn bg-gold text-canvas hover:bg-gold-light;
   }
 
   .btn-secondary {
-    @apply btn border border-nightBorder bg-nightLight text-slate-200 hover:border-slate-400 hover:text-white;
+    @apply btn border border-line-strong text-fg hover:border-fg-muted hover:bg-raised;
   }
 
   .icon-btn {
-    @apply inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-300 transition-colors hover:bg-nightLight hover:text-white;
+    @apply inline-flex h-10 w-10 items-center justify-center rounded-full text-fg-muted transition-colors hover:bg-raised hover:text-fg;
+  }
+
+  .eyebrow {
+    @apply text-xs font-medium uppercase tracking-eyebrow text-gold;
+  }
+
+  .heading {
+    @apply font-display font-light tracking-tight text-fg;
+  }
+
+  .field {
+    @apply block w-full rounded-lg border border-line-field bg-raised px-4 py-3 text-sm text-fg placeholder:text-fg-subtle transition-colors focus:border-gold;
+  }
+
+  .link {
+    @apply text-gold underline decoration-gold/40 underline-offset-4 transition-colors hover:decoration-gold;
   }
 
   .skeleton {
-    @apply animate-pulse rounded-lg bg-nightLight;
+    @apply animate-pulse rounded-lg bg-surface;
   }
 }

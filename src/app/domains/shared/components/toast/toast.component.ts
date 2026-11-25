@@ -10,14 +10,14 @@ import { ToastService } from '@shared/services/toast.service';
       aria-live="polite">
       @if (message(); as text) {
         <div
-          class="pointer-events-auto flex items-center gap-3 rounded-lg border border-nightBorder bg-nightLight px-4 py-3 text-sm shadow-soft">
+          class="pointer-events-auto flex items-center gap-3 rounded-lg border border-line bg-surface px-4 py-3 text-sm shadow-soft">
           <span
-            class="h-2 w-2 rounded-full bg-emerald-400"
+            class="h-2 w-2 rounded-full bg-success"
             aria-hidden="true"></span>
           <span>{{ text }}</span>
           <button
             type="button"
-            class="ml-2 text-slate-400 hover:text-white"
+            class="ml-2 text-fg-muted hover:text-fg"
             (click)="dismiss()"
             aria-label="Cerrar notificación">
             ✕
