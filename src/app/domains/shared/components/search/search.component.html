@@ -1,7 +1,7 @@
 <form role="search" class="relative w-full md:w-72" (ngSubmit)="search()">
   <label for="product-search" class="sr-only">Buscar productos</label>
   <svg
-    class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500"
+    class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
     aria-hidden="true"
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
@@ -19,5 +19,5 @@
     [formControl]="query"
     autocomplete="off"
     placeholder="Buscar productos…"
-    class="block w-full rounded-lg border border-nightBorder bg-nightLight py-2 pl-9 pr-3 text-sm text-slate-100 placeholder:text-slate-500 focus:border-accent" />
+    class="block w-full rounded-lg border border-nightBorder bg-nightLight py-2 pl-9 pr-3 text-sm text-slate-100 placeholder:text-slate-400 focus:border-accent" />
 </form>

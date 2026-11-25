@@ -9,7 +9,10 @@ module.exports = {
         night: '#0A0F1F', // Fondo principal azul noche
         nightLight: '#1A2035', // Superficies (tarjetas, paneles)
         nightBorder: '#2A3048', // Bordes suaves
-        accent: '#3B82F6', // Botones y links
+        accent: {
+          DEFAULT: '#2563EB', // Fondos de botones (blanco encima: 5.2:1)
+          light: '#60A5FA', // Texto y links sobre el fondo oscuro (7.5:1)
+        },
       },
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
