@@ -14,7 +14,7 @@ import { combineLatest, switchMap, tap } from 'rxjs';
 import { ImgFallbackDirective } from '@shared/directives/img-fallback.directive';
 import { Product } from '@shared/models/product.model';
 import { CartService } from '@shared/services/cart.service';
-import { ProductService } from '@shared/services/product.service';
+import { CATALOG_SOURCE } from '@shared/data-sources/catalog-source.token';
 import { ToastService } from '@shared/services/toast.service';
 import { LoadState, toLoadState } from '@shared/utils/load-state';
 import { pageTitle } from '@shared/utils/title';
@@ -27,7 +27,7 @@ const MAX_QUANTITY = 10;
   templateUrl: './product-detail.component.html',
 })
 export default class ProductDetailComponent {
-  private readonly productService = inject(ProductService);
+  private readonly catalog = inject(CATALOG_SOURCE);
   private readonly cartService = inject(CartService);
   private readonly toast = inject(ToastService);
   private readonly title = inject(Title);
@@ -47,7 +47,7 @@ export default class ProductDetailComponent {
         this.quantity.set(1);
       }),
       switchMap(([slug]) =>
-        this.productService.getBySlug(slug).pipe(toLoadState())
+        this.catalog.getProductBySlug(slug).pipe(toLoadState())
       )
     ),
     { initialValue: { status: 'loading' } as LoadState<Product> }

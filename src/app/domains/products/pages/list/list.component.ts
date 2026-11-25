@@ -5,8 +5,7 @@ import { combineLatest, switchMap } from 'rxjs';
 import { ProductComponent } from '@products/components/product/product.component';
 import { Product } from '@shared/models/product.model';
 import { CartService } from '@shared/services/cart.service';
-import { CategoryService } from '@shared/services/category.service';
-import { ProductService } from '@shared/services/product.service';
+import { CATALOG_SOURCE } from '@shared/data-sources/catalog-source.token';
 import { ToastService } from '@shared/services/toast.service';
 import { LoadState, toLoadState } from '@shared/utils/load-state';
 
@@ -17,7 +16,7 @@ import { LoadState, toLoadState } from '@shared/utils/load-state';
 })
 export default class ListComponent {
   private readonly cartService = inject(CartService);
-  private readonly productService = inject(ProductService);
+  private readonly catalog = inject(CATALOG_SOURCE);
   private readonly toast = inject(ToastService);
 
   /** Parámetro de ruta `/category/:slug`. */
@@ -27,7 +26,7 @@ export default class ListComponent {
 
   readonly skeletons = Array.from({ length: 8 }, (_, i) => i);
 
-  readonly categories = toSignal(inject(CategoryService).getAll(), {
+  readonly categories = toSignal(this.catalog.getCategories(), {
     initialValue: [],
   });
 
@@ -46,9 +45,7 @@ export default class ListComponent {
       toObservable(this.retry),
     ]).pipe(
       switchMap(([categorySlug, title]) =>
-        this.productService
-          .getProducts({ categorySlug, title })
-          .pipe(toLoadState())
+        this.catalog.getProducts({ categorySlug, title }).pipe(toLoadState())
       )
     ),
     { initialValue: { status: 'loading' } as LoadState<Product[]> }
