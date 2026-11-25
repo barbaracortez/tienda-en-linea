@@ -11,9 +11,15 @@
   role="dialog"
   aria-modal="true"
   aria-labelledby="cart-title"
-  class="fixed right-0 top-0 z-50 flex h-full w-full max-w-sm flex-col border-l border-nightBorder bg-night shadow-soft transition-[transform,visibility] duration-300"
+  class="fixed right-0 top-0 z-50 flex h-full w-full max-w-sm flex-col border-l border-nightBorder bg-night shadow-soft"
+  [style.transition]="
+    isOpen()
+      ? 'transform 300ms ease'
+      : 'transform 300ms ease, visibility 0s linear 300ms'
+  "
   [class.translate-x-full]="!isOpen()"
-  [class.invisible]="!isOpen()">
+  [class.invisible]="!isOpen()"
+  (keydown)="trapFocus($event)">
   <div
     class="flex items-center justify-between border-b border-nightBorder p-4">
     <h2 id="cart-title" class="text-lg font-semibold">

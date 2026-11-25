@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { cartNotEmptyGuard } from '@checkout/guards/cart-not-empty.guard';
 import { LayoutComponent } from '@shared/components/layout/layout.component';
 
 export const routes: Routes = [
@@ -20,6 +21,19 @@ export const routes: Routes = [
         path: 'product/:slug',
         loadComponent: () =>
           import('@products/pages/product-detail/product-detail.component'),
+      },
+      {
+        path: 'checkout',
+        title: 'Finalizar compra',
+        canActivate: [cartNotEmptyGuard],
+        loadComponent: () =>
+          import('@checkout/pages/checkout/checkout.component'),
+      },
+      {
+        path: 'checkout/confirmacion/:orderId',
+        title: 'Pedido confirmado',
+        loadComponent: () =>
+          import('@checkout/pages/confirmation/confirmation.component'),
       },
       {
         path: 'about',

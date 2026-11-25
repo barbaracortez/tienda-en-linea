@@ -1,0 +1,235 @@
+<a
+  routerLink="/"
+  class="mb-6 inline-flex items-center gap-1 text-sm text-slate-400 hover:text-white">
+  <span aria-hidden="true">←</span> Seguir comprando
+</a>
+
+<h1 class="text-3xl font-bold tracking-tight">Finalizar compra</h1>
+
+<p
+  class="mt-4 flex items-start gap-2 rounded-lg border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
+  <span aria-hidden="true">ℹ️</span>
+  <span
+    ><strong>Compra simulada.</strong> Es un proyecto de portfolio: no se cobra
+    nada, no se piden datos de pago y no se envía ningún pedido.</span
+  >
+</p>
+
+<!-- Pasos -->
+<ol class="mt-6 flex flex-wrap items-center gap-2 text-sm" aria-label="Pasos">
+  @for (s of ['details', 'review']; track s; let i = $index) {
+    <li
+      class="flex items-center gap-2"
+      [attr.aria-current]="step() === s ? 'step' : null">
+      <span
+        class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold"
+        [class.bg-accent]="step() === s"
+        [class.text-white]="step() === s"
+        [class.bg-nightLight]="step() !== s"
+        [class.text-slate-400]="step() !== s"
+        >{{ i + 1 }}</span
+      >
+      <span
+        [class.text-white]="step() === s"
+        [class.text-slate-400]="step() !== s">
+        {{ s === 'details' ? 'Tus datos' : 'Revisión' }}
+      </span>
+      <span class="text-slate-600" aria-hidden="true">→</span>
+    </li>
+  }
+  <li class="flex items-center gap-2 text-slate-400">
+    <span
+      class="flex h-6 w-6 items-center justify-center rounded-full bg-nightLight text-xs font-semibold"
+      >3</span
+    >
+    Confirmación
+  </li>
+</ol>
+
+@if (items().length === 0) {
+  <div class="mt-8 rounded-xl border border-nightBorder p-10 text-center">
+    <p class="text-lg font-medium">Tu carrito está vacío</p>
+    <a routerLink="/" class="btn-primary mt-4">Ver productos</a>
+  </div>
+} @else {
+  <div class="mt-8 grid gap-8 lg:grid-cols-[1fr_22rem]">
+    <section aria-labelledby="step-title">
+      @if (step() === 'details') {
+        <h2
+          id="step-title"
+          #stepHeading
+          tabindex="-1"
+          class="text-xl font-semibold focus:outline-none">
+          Datos de envío
+        </h2>
+        <p class="mt-1 text-sm text-slate-400">
+          Todos los campos son obligatorios.
+        </p>
+
+        <form
+          class="mt-6 grid gap-5 sm:grid-cols-2"
+          [formGroup]="form"
+          (ngSubmit)="continueToReview()"
+          novalidate>
+          @for (field of fields; track field.name) {
+            @let error = errorFor(field.name);
+            <div [class]="field.wide ? 'sm:col-span-2' : ''">
+              <label
+                [for]="field.name"
+                class="mb-1.5 block text-sm font-medium text-slate-200"
+                >{{ field.label }}</label
+              >
+              <input
+                [id]="field.name"
+                [type]="field.type"
+                [formControlName]="field.name"
+                [attr.autocomplete]="field.autocomplete"
+                [placeholder]="field.placeholder"
+                [attr.aria-invalid]="error ? true : null"
+                [attr.aria-describedby]="
+                  (field.hint ? field.name + '-hint ' : '') +
+                  field.name +
+                  '-error'
+                "
+                class="block w-full rounded-lg border bg-nightLight px-3 py-2.5 text-sm text-slate-100 placeholder:text-slate-400 focus:border-accent"
+                [class.border-red-400]="error"
+                [class.border-nightBorder]="!error" />
+              @if (field.hint) {
+                <p
+                  [id]="field.name + '-hint'"
+                  class="mt-1 text-xs text-slate-400">
+                  {{ field.hint }}
+                </p>
+              }
+              <p
+                [id]="field.name + '-error'"
+                class="mt-1 min-h-4 text-xs text-red-300"
+                aria-live="polite">
+                {{ error }}
+              </p>
+            </div>
+          }
+          <div class="sm:col-span-2">
+            <button type="submit" class="btn-primary w-full sm:w-auto">
+              Continuar a la revisión
+            </button>
+          </div>
+        </form>
+      } @else {
+        @let customer = form.getRawValue();
+        <h2
+          id="step-title"
+          #stepHeading
+          tabindex="-1"
+          class="text-xl font-semibold focus:outline-none">
+          Revisá tu pedido
+        </h2>
+
+        <div
+          class="mt-6 rounded-xl border border-nightBorder bg-nightLight p-5">
+          <div class="flex items-start justify-between gap-4">
+            <h3 class="font-medium">Envío a</h3>
+            <button
+              type="button"
+              class="text-sm text-accent-light hover:underline"
+              (click)="editDetails()">
+              Editar datos
+            </button>
+          </div>
+          <dl class="mt-3 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+            <div>
+              <dt class="text-slate-400">Nombre</dt>
+              <dd>{{ customer.fullName }}</dd>
+            </div>
+            <div>
+              <dt class="text-slate-400">Email</dt>
+              <dd class="break-all">{{ customer.email }}</dd>
+            </div>
+            <div class="sm:col-span-2">
+              <dt class="text-slate-400">Dirección</dt>
+              <dd>
+                {{ customer.address }}, {{ customer.city }} ({{
+                  customer.postalCode
+                }})
+              </dd>
+            </div>
+          </dl>
+        </div>
+
+        @if (submitError()) {
+          <p class="mt-4 text-sm text-red-300" role="alert">
+            No pudimos procesar el pedido. Intentá de nuevo.
+          </p>
+        }
+
+        <div class="mt-6 flex flex-wrap gap-3">
+          <button
+            type="button"
+            class="btn-primary"
+            [disabled]="submitting()"
+            [attr.aria-busy]="submitting()"
+            (click)="confirmOrder()">
+            @if (submitting()) {
+              <span
+                class="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
+                aria-hidden="true"></span>
+              Procesando…
+            } @else {
+              Confirmar pedido (simulado)
+            }
+          </button>
+          <button
+            type="button"
+            class="btn-secondary"
+            [disabled]="submitting()"
+            (click)="editDetails()">
+            Volver
+          </button>
+        </div>
+      }
+    </section>
+
+    <!-- Resumen -->
+    <aside
+      class="h-fit rounded-xl border border-nightBorder bg-nightLight p-5 lg:sticky lg:top-24"
+      aria-labelledby="summary-title">
+      <h2 id="summary-title" class="font-semibold">
+        Resumen ({{ count() }} {{ count() === 1 ? 'producto' : 'productos' }})
+      </h2>
+      <ul class="mt-4 divide-y divide-nightBorder">
+        @for (item of items(); track item.product.id) {
+          <li class="flex gap-3 py-3">
+            <img
+              appImgFallback
+              [ngSrc]="item.product.images[0] || placeholder"
+              alt=""
+              width="56"
+              height="56"
+              class="h-14 w-14 flex-none rounded-lg bg-night object-cover" />
+            <div class="min-w-0 flex-1 text-sm">
+              <p class="line-clamp-2">{{ item.product.title }}</p>
+              <p class="text-slate-400">Cantidad: {{ item.quantity }}</p>
+            </div>
+            <p class="text-sm font-medium">
+              {{ item.product.price * item.quantity | currency }}
+            </p>
+          </li>
+        }
+      </ul>
+      <dl class="mt-4 space-y-2 border-t border-nightBorder pt-4 text-sm">
+        <div class="flex justify-between">
+          <dt class="text-slate-400">Subtotal</dt>
+          <dd>{{ total() | currency }}</dd>
+        </div>
+        <div class="flex justify-between">
+          <dt class="text-slate-400">Envío</dt>
+          <dd class="text-emerald-300">Gratis</dd>
+        </div>
+        <div class="flex justify-between text-base font-semibold">
+          <dt>Total</dt>
+          <dd>{{ total() | currency }}</dd>
+        </div>
+      </dl>
+    </aside>
+  </div>
+}

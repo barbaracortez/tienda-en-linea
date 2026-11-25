@@ -24,6 +24,7 @@
       "@shared/*": ["./src/app/domains/shared/*"],
       "@products/*": ["./src/app/domains/products/*"],
       "@info/*": ["./src/app/domains/info/*"],
+      "@checkout/*": ["./src/app/domains/checkout/*"],
       "@env/*": ["./src/environments/*"]
     }
   },
