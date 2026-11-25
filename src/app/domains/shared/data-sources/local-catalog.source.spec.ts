@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
 import { CATEGORIES, PRODUCTS } from '@shared/data/catalog';
 import { ProductQuery } from '@shared/models/product.model';
@@ -98,4 +98,30 @@ describe('LocalCatalogSource', () => {
       firstValueFrom(source.getProductBySlug('no-existe'))
     ).toBeRejectedWithError(ProductNotFoundError);
   });
+});
+
+describe('LocalCatalogSource con latencia simulada', () => {
+  let source: LocalCatalogSource;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: CATALOG_LATENCY, useValue: () => 500 }],
+    });
+    source = TestBed.inject(LocalCatalogSource);
+  });
+
+  it('no demora la carga inicial, pero sí las consultas siguientes', fakeAsync(() => {
+    let first = 0;
+    source.getProducts().subscribe(p => (first = p.length));
+    expect(first).toBe(PRODUCTS.length);
+
+    let second = 0;
+    source
+      .getProducts({ categorySlug: 'ropa' })
+      .subscribe(p => (second = p.length));
+    tick(499);
+    expect(second).toBe(0);
+    tick(1);
+    expect(second).toBeGreaterThan(0);
+  }));
 });

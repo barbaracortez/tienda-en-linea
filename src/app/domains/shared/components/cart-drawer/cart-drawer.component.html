@@ -61,12 +61,14 @@
     <ul class="flex-1 divide-y divide-nightBorder overflow-y-auto px-4">
       @for (item of items(); track item.product.id) {
         <li class="flex gap-3 py-4">
+          <!-- alt vacío: el título del producto está justo al lado -->
           <img
             appImgFallback
-            [src]="item.product.images[0]"
-            [alt]="item.product.title"
-            class="h-16 w-16 flex-none rounded-lg bg-nightLight object-cover"
-            loading="lazy" />
+            [ngSrc]="item.product.images[0] || placeholder"
+            alt=""
+            width="64"
+            height="64"
+            class="h-16 w-16 flex-none rounded-lg bg-nightLight object-cover" />
           <div class="flex min-w-0 flex-1 flex-col gap-2">
             <div class="flex items-start justify-between gap-2">
               <a

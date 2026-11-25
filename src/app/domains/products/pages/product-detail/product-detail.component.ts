@@ -19,6 +19,7 @@ import { CartService } from '@shared/services/cart.service';
 import { CATALOG_SOURCE } from '@shared/data-sources/catalog-source.token';
 import { ToastService } from '@shared/services/toast.service';
 import { LoadState, toLoadState } from '@shared/utils/load-state';
+import { productImageLoader } from '@shared/utils/image-loader';
 import { SeoService, truncate } from '@shared/utils/title';
 
 const MAX_QUANTITY = 10;
@@ -87,6 +88,11 @@ export default class ProductDetailComponent {
         this.seo.update({ title: 'Producto no encontrado' });
       }
     });
+  }
+
+  /** Variante chica de la foto para las miniaturas de la galería. */
+  thumbnail(image: string): string {
+    return productImageLoader({ src: image, width: 200 });
   }
 
   selectImage(image: string) {

@@ -9,6 +9,9 @@ import { CatalogSource, ProductNotFoundError } from './catalog-source';
 /**
  * Devuelve la latencia simulada en ms. Por defecto entre 300 y 600 ms para que
  * los estados de carga se vean como con una API real. En tests se usa 0.
+ *
+ * No se aplica a la carga inicial de la página (para no penalizar el primer
+ * renderizado), sino a las interacciones: filtros, búsqueda y navegación.
  */
 export const CATALOG_LATENCY = new InjectionToken<() => number>(
   'CATALOG_LATENCY',
@@ -19,9 +22,10 @@ export const CATALOG_LATENCY = new InjectionToken<() => number>(
 @Injectable({ providedIn: 'root' })
 export class LocalCatalogSource implements CatalogSource {
   private readonly latency = inject(CATALOG_LATENCY);
+  private initialLoad = true;
 
   getProducts(query: ProductQuery = {}): Observable<Product[]> {
-    return this.respond(() => queryProducts(PRODUCTS, query));
+    return this.respond(() => queryProducts(PRODUCTS, query), true);
   }
 
   getProductBySlug(slug: string): Observable<Product> {
@@ -31,16 +35,25 @@ export class LocalCatalogSource implements CatalogSource {
         throw new ProductNotFoundError(slug);
       }
       return product;
-    });
+    }, true);
   }
 
   getCategories(): Observable<Category[]> {
     return this.respond(() => CATEGORIES);
   }
 
-  private respond<T>(compute: () => T): Observable<T> {
-    const source = defer(() => of(compute()));
-    const ms = this.latency();
-    return ms > 0 ? source.pipe(delay(ms)) : source;
+  /**
+   * @param endsInitialLoad la primera consulta de productos marca el fin de la
+   *   carga inicial: desde ahí, cada respuesta tiene latencia simulada.
+   */
+  private respond<T>(compute: () => T, endsInitialLoad = false): Observable<T> {
+    return defer(() => {
+      const ms = this.initialLoad ? 0 : this.latency();
+      if (endsInitialLoad) {
+        this.initialLoad = false;
+      }
+      const result = of(compute());
+      return ms > 0 ? result.pipe(delay(ms)) : result;
+    });
   }
 }

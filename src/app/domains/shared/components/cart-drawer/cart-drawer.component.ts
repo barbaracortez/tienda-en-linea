@@ -1,4 +1,4 @@
-import { CurrencyPipe, DOCUMENT } from '@angular/common';
+import { CurrencyPipe, DOCUMENT, NgOptimizedImage } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -8,12 +8,15 @@ import {
   viewChild,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { ImgFallbackDirective } from '@shared/directives/img-fallback.directive';
+import {
+  IMAGE_PLACEHOLDER,
+  ImgFallbackDirective,
+} from '@shared/directives/img-fallback.directive';
 import { CartService } from '@shared/services/cart.service';
 
 @Component({
   selector: 'app-cart-drawer',
-  imports: [CurrencyPipe, RouterLink, ImgFallbackDirective],
+  imports: [CurrencyPipe, NgOptimizedImage, RouterLink, ImgFallbackDirective],
   templateUrl: './cart-drawer.component.html',
 })
 export class CartDrawerComponent {
@@ -27,6 +30,7 @@ export class CartDrawerComponent {
   readonly count = this.cart.count;
   readonly total = this.cart.total;
   readonly isOpen = this.cart.isOpen;
+  readonly placeholder = IMAGE_PLACEHOLDER;
 
   /** Elemento que tenía el foco antes de abrir, para devolvérselo al cerrar. */
   private returnFocusTo: HTMLElement | null = null;

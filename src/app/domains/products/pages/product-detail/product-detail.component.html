@@ -45,6 +45,7 @@
             [alt]="coverAlt()"
             width="800"
             height="800"
+            sizes="(min-width: 768px) 50vw, 100vw"
             priority
             class="h-full w-full object-cover" />
         </div>
@@ -67,7 +68,7 @@
                        NgOptimizedImage identifica las imágenes por URL. -->
                   <img
                     appImgFallback
-                    [src]="image"
+                    [src]="thumbnail(image)"
                     alt=""
                     width="200"
                     height="200"
